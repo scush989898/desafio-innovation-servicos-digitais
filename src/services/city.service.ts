@@ -10,18 +10,31 @@ import { AppError } from "../errors/app.error";
 const cityRepository = AppDataSource.getRepository(City);
 
 const createCityService = async (data: ICityCreate): Promise<City> => {
-  await resourceAlreadyExists(cityRepository, { name: data.name.toLowerCase() });
-  const citiesList: CityRequest[] = await IBGE_API.get("").then((res) => res.data);
+  const citiesList: CityRequest[] = await IBGE_API.get("?orderBy=nome&view=nivelado").then(
+    (res) => res.data
+  );
   const newCity = citiesList.find(
-    (elem: CityRequest) => elem["municipio-nome"].toLowerCase() == data.name.toLowerCase()
+    (elem: CityRequest) =>
+      elem["municipio-nome"]
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "") ==
+      data.name
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
   );
   if (!newCity) {
     throw new AppError(Message.cityNotFound);
   }
-
+  await resourceAlreadyExists(
+    cityRepository,
+    { name: newCity["municipio-nome"] },
+    Message.cityAlreadyExists
+  );
   const res = cityRepository.create({
     id: newCity["municipio-id"],
-    name: newCity["municipio-nome"].toLowerCase(),
+    name: newCity["municipio-nome"],
   });
   return await cityRepository.save(res);
 };

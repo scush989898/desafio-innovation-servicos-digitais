@@ -8,12 +8,14 @@ import {
   updateProductController,
   softDeleteProductController,
   restoreSoftDeleteProductController,
+  getAllDeletedProductsController,
 } from "../controllers/product.controller";
 
 const productRoutes = Router();
 
 productRoutes.post("", validateSchema(createProductSchema), createProductController);
 productRoutes.get("", getAllProductsController);
+productRoutes.get("/deleted", getAllDeletedProductsController);
 productRoutes.get("/:id", getOneProductController);
 productRoutes.patch("/:id", validateSchema(updateProductSchema), updateProductController);
 productRoutes.delete("/:id", softDeleteProductController);

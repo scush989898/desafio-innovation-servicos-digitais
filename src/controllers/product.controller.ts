@@ -4,7 +4,8 @@ import {
   getOneProductService,
   updateProductService,
   softDeleteProductService,
-  restoreSoftDeleteProductService
+  restoreSoftDeleteProductService,
+  getSoftDeletededProducts,
 } from "../services/product.service";
 import { Request, Response } from "express";
 import { StatusCode } from "../utils/statusCode.utils";
@@ -16,6 +17,11 @@ const createProductController = async (req: Request, res: Response) => {
 
 const getAllProductsController = async (req: Request, res: Response) => {
   const productList = await getAllProductsService();
+  return res.json(productList);
+};
+
+const getAllDeletedProductsController = async (req: Request, res: Response) => {
+  const productList = await getSoftDeletededProducts();
   return res.json(productList);
 };
 
@@ -40,9 +46,8 @@ const softDeleteProductController = async (req: Request, res: Response) => {
 const restoreSoftDeleteProductController = async (req: Request, res: Response) => {
   const { id } = req.params;
   const restored = await restoreSoftDeleteProductService(id);
-  return res.json(restored)
+  return res.json(restored);
 };
-
 
 export {
   createProductController,
@@ -50,5 +55,6 @@ export {
   getOneProductController,
   updateProductController,
   softDeleteProductController,
-  restoreSoftDeleteProductController
+  restoreSoftDeleteProductController,
+  getAllDeletedProductsController
 };
