@@ -4,12 +4,12 @@ services:
   db:
     container_name: db
     image: postgres
+    ports:
+      - 5433:5432
     environment:
       - POSTGRES_USER=teste
       - POSTGRES_PASSWORD=1234
       - POSTGRES_DB=desafio_innovation
-    ports:
-      - 5433:5432
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U teste -d desafio_innovation"]
       interval: 10s
@@ -21,7 +21,6 @@ services:
 
   api:
     container_name: api
-    command: sh -c "yarn typeorm migration:run -d src/data-source && yarn dev"
     build: .
     ports:
       - 3000:3000
@@ -34,19 +33,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    volumes:
-      - .:/app
-
-  # migration:
-  #   container_name: migration
-  #   build: .
-  #   command: "yarn typeorm migration:run -d src/data-source"
-
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #   volumes:
-  #     - .:/app
-
+    command: sh -c "yarn typeorm migration:run -d src/data-source && yarn dev"
 volumes:
   pgdata:
