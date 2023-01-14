@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+  db:
+    container_name: db
+    image: postgres
+    environment:
+      - POSTGRES_USER=teste
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=desafio_innovation
+    ports:
+      - 5433:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U teste -d desafio_innovation"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  api:
+    container_name: api
+    command: sh -c "yarn typeorm migration:run -d src/data-source && yarn dev"
+    build: .
+    ports:
+      - 3000:3000
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=teste
+      - DB_PASSWORD=1234
+      - DB=desafio_innovation
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+
+  # migration:
+  #   container_name: migration
+  #   build: .
+  #   command: "yarn typeorm migration:run -d src/data-source"
+
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   volumes:
+  #     - .:/app
+
+volumes:
+  pgdata:

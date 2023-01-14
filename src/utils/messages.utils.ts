@@ -6,6 +6,5 @@ export class Message {
   static notFound: string = "Not found";
   static alreadyExists: string = "The resource already exists";
   static cityNotFound: string = "City not found";
-  static notFoundOrAlreadyDeleted: string = "Not found or already deleted";
   static cityAlreadyExists: string = "There is already a city with that name registered";
 }

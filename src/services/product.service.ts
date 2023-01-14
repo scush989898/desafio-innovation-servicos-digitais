@@ -46,7 +46,7 @@ const restoreSoftDeleteProductService = async (id: string): Promise<Product> => 
     },
     withDeleted: true,
   });
-  if (!restored) throw new AppError(Message.notFoundOrAlreadyDeleted);
+  if (!restored) throw new AppError(Message.notFound);
 
   await productRepository.restore(id);
   await productRepository.update(id, { status: ProductStatus.ACTIVE });

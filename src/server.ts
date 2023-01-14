@@ -8,7 +8,7 @@ import { Message } from "./utils/messages.utils";
       console.log(Message.dataSourceInit);
     })
     .catch((err) => {
-      console.error(Message.errorDataSourceInit, err);
+      console.log(Message.errorDataSourceInit, err);
     });
 
   app.listen(3000, () => {
